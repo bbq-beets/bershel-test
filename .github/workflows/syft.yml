@@ -1,0 +1,23 @@
+name: SBOM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ windows-2019, windows-2022 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install SYFT tool on Windows
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b D:/syft
+      - name: Run SYFT on Windows
+        run: D:/syft/syft dir:C:/ -vv -o spdx-json=sbom.json
+      - name: Compress SBOM file
+        run: Compress-Archive sbom.json sbom.json.zip
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sbom-${{ github.event.client_payload.agentSpec }}-${{ github.event.client_payload.imageVersion }}
+          path: sbom.json.zip
+          if-no-files-found: warn
