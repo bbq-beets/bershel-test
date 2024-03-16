@@ -28,6 +28,7 @@ jobs:
         shell: bash
       - name: Compress SBOM file
         run: Compress-Archive sbom.json sbom.json.zip
+        shell: pwsh
       #Upload artifact action
       - uses: actions/upload-artifact@v3
         with:
