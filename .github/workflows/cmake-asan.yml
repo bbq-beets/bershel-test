@@ -1,0 +1,31 @@
+# Relevant [issue](https://github.com/actions/runner-images/issues/8891)
+# Build with Cmake using Microsoft.Component.VC.ASAN
+name: cmake-asan
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+#    strategy:
+#      matrix:
+#        msvc: [ default, 14.37, 14.38 ]     
+    runs-on: windows-2022
+    name: Build and Run
+    defaults:
+      run:
+        working-directory: src/cmake/asan
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v3
+      - name: VC Vars
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Check ASAN DLL
+        run: where.exe clang_rt.asan_dynamic-x86_64.dll
+      - name: Configure
+        working-directory: src/cmake/asan
+        run: cmake .
+      - name: Build and Run
+        run: cmake --build . --config Debug --target run-repro
