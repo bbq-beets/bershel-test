@@ -15,7 +15,7 @@ jobs:
     name: Build and Run
     defaults:
       run:
-        working-directory: src/cmake/asan
+        working-directory: cmake/asan
 
     steps:
       - name: Clone
