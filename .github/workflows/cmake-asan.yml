@@ -25,7 +25,6 @@ jobs:
       - name: Check ASAN DLL
         run: where.exe clang_rt.asan_dynamic-x86_64.dll
       - name: Configure
-        working-directory: src/cmake/asan
         run: cmake .
       - name: Build and Run
         run: cmake --build . --config Debug --target run-repro
