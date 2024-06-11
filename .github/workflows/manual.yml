@@ -1,0 +1,16 @@
+name: Manual workflow
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ macos-11 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Run multiline
+        run: |
+          gcc -v
