@@ -8,7 +8,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ macos-14, macos-14-xlarge ]
+        os: [ macos-14, macos-14-xlarge, macos-13, macos-13-large, macos-13-xlarge ]
         attempt: [ 1, 2, 3, 4, 5 ]
     runs-on: ${{ matrix.os }}
     steps:
