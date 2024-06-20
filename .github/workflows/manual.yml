@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         attempt: [ 1, 2, 3, 4, 5 ]
-    runs-on: macos-14
+    runs-on: macos-14-xlarge
     steps:
       - uses: actions/checkout@v4
       - uses: maxim-lobanov/setup-xcode@v1
