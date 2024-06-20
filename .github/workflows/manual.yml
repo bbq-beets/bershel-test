@@ -6,6 +6,9 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        attempt: [ 1, 2, 3, 4, 5 ]
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
