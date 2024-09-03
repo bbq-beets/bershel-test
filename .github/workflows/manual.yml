@@ -21,6 +21,8 @@ jobs:
         run: |
             sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/*
             sudo rm -rf ~/Library/Developer/Xcode/DerivedData/*
+            sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService
+            defaults delete com.apple.dt.Xcode
       - name: Download visionOS
         run: |
             xcodebuild -downloadPlatform visionOS
