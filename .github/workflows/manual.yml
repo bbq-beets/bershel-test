@@ -8,13 +8,19 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ macos-14-large ]
+        os: [ macos-14 ]
         attempt: [ 1, 2, 3, 4, 5 ]
+        xcode: [ 16.0, 16.1 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.0-beta'
-      - run: |
+          xcode-version: '${{ matrix.os }}-beta'
+      - name: RM Xcode platforms
+        run: |
+            sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/*
+            sudo rm -rf ~/Library/Developer/Xcode/DerivedData/*
+      - name: Download visionOS
+        run: |
             xcodebuild -downloadPlatform visionOS
