@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ macos-14 ]
-        xcode: [ 15.4, 16_beta_6, 16.1_beta ]
+        xcode: [ 15.4 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Disk space
@@ -23,6 +23,7 @@ jobs:
             xcode-select -p
             sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
             xcodebuild -version
+            xcodebuild -showsdks
             sudo xcodebuild -runFirstLaunch 
             sudo xcodebuild -downloadPlatform visionOS
             sudo xcodebuild -runFirstLaunch 
