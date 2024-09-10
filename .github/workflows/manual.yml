@@ -20,7 +20,7 @@ jobs:
       - name: Download visionOS
         run: |
             xcode-select -p
-            xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
+            sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
             xcodebuild -version
             xcodebuild -downloadAllPlatforms
             xcodebuild -runFirstLaunch 
