@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Disk space
         run: |
+          find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type f
           diskutil info / | grep "Free Space"
           df -h
 #      - uses: actions/checkout@v4
