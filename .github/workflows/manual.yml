@@ -22,9 +22,9 @@ jobs:
             xcode-select -p
             sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
             xcodebuild -version
-            xcodebuild -runFirstLaunch 
-            xcodebuild -downloadAllPlatforms
-            xcodebuild -runFirstLaunch 
+            sudo xcodebuild -runFirstLaunch 
+            sudo xcodebuild -downloadPlatform visionOS
+            sudo xcodebuild -runFirstLaunch 
       - name: Disk space
         run: |
           diskutil info / | grep "Free Space"
