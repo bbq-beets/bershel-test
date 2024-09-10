@@ -22,4 +22,7 @@ jobs:
           xcode-version: '${{ matrix.xcode }}-beta'
       - name: Download visionOS
         run: |
-            xcodebuild -downloadPlatform visionOS
+            xcode-select -p
+            xcodebuild -version
+            xcodebuild -runFirstLaunch 
+            xcodebuild -downloadAllPlatform
