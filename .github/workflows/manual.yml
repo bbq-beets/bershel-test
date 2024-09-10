@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ macos-14 ]
-        xcode: [ 15.4 ]
+        xcode: [ 15.4, 16_beta_6, 16.1_beta ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Disk space
@@ -17,12 +17,14 @@ jobs:
           diskutil info / | grep "Free Space"
           df -h
 #      - uses: actions/checkout@v4
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '${{ matrix.xcode }}'
       - name: Download visionOS
         run: |
             xcode-select -p
+            xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
             xcodebuild -version
             xcodebuild -runFirstLaunch 
             xcodebuild -downloadAllPlatforms
+      - name: Disk space
+        run: |
+          diskutil info / | grep "Free Space"
+          df -h
