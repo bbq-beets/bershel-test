@@ -22,8 +22,8 @@ jobs:
             xcode-select -p
             xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
             xcodebuild -version
-            xcodebuild -runFirstLaunch 
             xcodebuild -downloadAllPlatforms
+            xcodebuild -runFirstLaunch 
       - name: Disk space
         run: |
           diskutil info / | grep "Free Space"
