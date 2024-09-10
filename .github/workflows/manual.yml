@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ macos-14 ]
-        xcode: [ 16.0, 16.1 ]
+        xcode: [ 16, 16.1 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Disk space
@@ -25,4 +25,4 @@ jobs:
             xcode-select -p
             xcodebuild -version
             xcodebuild -runFirstLaunch 
-            xcodebuild -downloadAllPlatform
+            xcodebuild -downloadAllPlatforms
