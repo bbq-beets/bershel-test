@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ macos-14 ]
-        xcode: [ 15.4, 16_beta_6, 16.1-beta ]
+        xcode: [ 15.4, 16_beta_6, 16.1_beta ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Disk space
