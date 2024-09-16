@@ -8,26 +8,9 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ macos-14 ]
-        xcode: [ 15.4, 16_beta_6, 16.1_beta ]
+        os: [ macos-12, macos-14, macos-14-large ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Disk space
+      - name: Env
         run: |
-          diskutil info / | grep "Free Space"
-          df -h
-#      - uses: actions/checkout@v4
-      - name: Download visionOS
-        run: |
-            xcode-select -p
-            sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app
-            xcodebuild -version
-            xcodebuild -showsdks
-            sudo xcodebuild -runFirstLaunch
-            sudo xcrun simctl list
-            sudo xcodebuild -downloadPlatform visionOS
-            sudo xcodebuild -runFirstLaunch
-      - name: Disk space
-        run: |
-          diskutil info / | grep "Free Space"
-          df -h
+            cat ~/.bashrc || true
