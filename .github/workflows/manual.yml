@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Xcodes
         run: |
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1
-           echo "---Files---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type f
+           echo "---Links---"
+           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type l
+           echo "---Folders---"
+           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type d
