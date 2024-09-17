@@ -14,5 +14,5 @@ jobs:
       - name: Xcodes
         run: |
            find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1
-           exho "---Files---"
+           echo "---Files---"
            find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type f
