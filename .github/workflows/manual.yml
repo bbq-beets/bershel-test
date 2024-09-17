@@ -8,9 +8,9 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ macos-15-xlarge ]
+        os: [ macos-14, macos-14-large ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Env
+      - name: Xcodes
         run: |
-            cat ~/.bashrc || true
+           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1
