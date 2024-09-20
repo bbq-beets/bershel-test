@@ -8,7 +8,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ macos-14, macos-14-large ]
+        os: [ macos-14, macos-14-large, macos-15-xlarge ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Xcodes
@@ -17,3 +17,7 @@ jobs:
            find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type l
            echo "---Folders---"
            find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type d
+      - name: Disk
+        run: |
+          diskutil info / | grep "Free Space"
+          df -h
