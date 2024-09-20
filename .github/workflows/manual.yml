@@ -13,11 +13,4 @@ jobs:
     steps:
       - name: Xcodes
         run: |
-           echo "---Links---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type l
-           echo "---Folders---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type d
-      - name: Disk
-        run: |
-          diskutil info / | grep "Free Space"
-          df -h
+           xcrun simctl list devices
