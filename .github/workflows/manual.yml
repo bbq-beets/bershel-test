@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - name: Check OS
+      shell: powershell
       run: |
         function Get-OSVersion {
             $osVersion = [Environment]::OSVersion
