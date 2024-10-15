@@ -8,16 +8,37 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ macos-14, macos-14-large, macos-15-xlarge, macos-15-large ]
+        os: [ macos-13, macos-13-large, macos-14, macos-14-large ]
     runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Xcodes
-        run: |
-           echo "---Links---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type l
-           echo "---Folders---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type d
-      - name: Disk
-        run: |
-          diskutil info / | grep "Free Space"
-          df -h
+    - name: Check OS
+      run: |
+        function Get-OSVersion {
+            $osVersion = [Environment]::OSVersion
+            $processorArchitecture = arch
+        
+            return [PSCustomObject]@{
+                Version        = $osVersion.Version
+                Platform       = $osVersion.Platform
+                IsArm64        = $processorArchitecture -eq "arm64"
+                IsMonterey     = $osVersion.Version.Major -eq "12"
+                IsVentura      = $($osVersion.Version.Major -eq "13")
+                IsVenturaArm64 = $($osVersion.Version.Major -eq "13" -and $processorArchitecture -eq "arm64")
+                IsVenturaX64   = $($osVersion.Version.Major -eq "13" -and $processorArchitecture -ne "arm64")
+                IsSonoma       = $($osVersion.Version.Major -eq "14")
+                IsSonomaArm64  = $($osVersion.Version.Major -eq "14" -and $processorArchitecture -eq "arm64")
+                IsSonomaX64    = $($osVersion.Version.Major -eq "14" -and $processorArchitecture -ne "arm64")
+                IsSequoia       = $($osVersion.Version.Major -eq "15")
+                IsSequoiaArm64  = $($osVersion.Version.Major -eq "15" -and $processorArchitecture -eq "arm64")
+                IsSequoiaX64    = $($osVersion.Version.Major -eq "15" -and $processorArchitecture -ne "arm64")
+            }
+        }
+        $os = Get-OSVersion
+        Write-Host "OS Version: $($os.Version), Is Arm64: $($os.IsArm64)"
+        if ($os.IsArm64) {
+            $expectedPrefix = "/opt/homebrew"
+        } else {
+            $expectedPrefix = "/usr/local"
+        }
+        Write-Host "Expected prefix: $expectedPrefix"
