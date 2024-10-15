@@ -17,7 +17,6 @@ jobs:
         function Get-OSVersion {
             $osVersion = [Environment]::OSVersion
             $processorArchitecture = arch
-        
             return [PSCustomObject]@{
                 Version        = $osVersion.Version
                 Platform       = $osVersion.Platform
