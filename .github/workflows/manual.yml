@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ macos-12, macos-13, macos-14, macos-15, windows-2019, windows-2022, ubuntu-22.04, ubuntu-24.04 ]
-    runs-on: ${{ github.event.client_payload.agentSpec }}
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Install SYFT tool on Windows
         if: ${{ runner.os == 'Windows' }}
