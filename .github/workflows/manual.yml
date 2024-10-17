@@ -1,44 +1,37 @@
-name: Manual workflow
+name: Create SBOM for the release
 
 on:
   workflow_dispatch:
-
-
+defaults:
+  run:
+    shell: pwsh
 jobs:
-  test:
+  building-sbom:
     strategy:
       matrix:
-        os: [ macos-13, macos-13-xlarge, macos-14, macos-14-large ]
-    runs-on: ${{ matrix.os }}
-
+        os: [ macos-12, macos-13, macos-14, macos-15, windows-2019, windows-2022, ubuntu-22.04, ubuntu-24.04 ]
+    runs-on: ${{ github.event.client_payload.agentSpec }}
     steps:
-    - name: Check OS
-      shell: powershell
-      run: |
-        function Get-OSVersion {
-            $osVersion = [Environment]::OSVersion
-            $processorArchitecture = arch
-            return [PSCustomObject]@{
-                Version        = $osVersion.Version
-                Platform       = $osVersion.Platform
-                IsArm64        = $processorArchitecture -eq "arm64"
-                IsMonterey     = $osVersion.Version.Major -eq "12"
-                IsVentura      = $($osVersion.Version.Major -eq "13")
-                IsVenturaArm64 = $($osVersion.Version.Major -eq "13" -and $processorArchitecture -eq "arm64")
-                IsVenturaX64   = $($osVersion.Version.Major -eq "13" -and $processorArchitecture -ne "arm64")
-                IsSonoma       = $($osVersion.Version.Major -eq "14")
-                IsSonomaArm64  = $($osVersion.Version.Major -eq "14" -and $processorArchitecture -eq "arm64")
-                IsSonomaX64    = $($osVersion.Version.Major -eq "14" -and $processorArchitecture -ne "arm64")
-                IsSequoia       = $($osVersion.Version.Major -eq "15")
-                IsSequoiaArm64  = $($osVersion.Version.Major -eq "15" -and $processorArchitecture -eq "arm64")
-                IsSequoiaX64    = $($osVersion.Version.Major -eq "15" -and $processorArchitecture -ne "arm64")
-            }
-        }
-        $os = Get-OSVersion
-        Write-Host "OS Version: $($os.Version), Is Arm64: $($os.IsArm64)"
-        if ($os.IsArm64) {
-            $expectedPrefix = "/opt/homebrew"
-        } else {
-            $expectedPrefix = "/usr/local"
-        }
-        Write-Host "Expected prefix: $expectedPrefix"
+      - name: Install SYFT tool on Windows
+        if: ${{ runner.os == 'Windows' }}
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b D:/syft
+      - name: Install SYFT tool on Ubuntu or macOS
+        if: ${{ runner.os != 'Windows' }}
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      - name: Run SYFT on Windows
+        if: ${{ runner.os == 'Windows' }}
+        run: D:/syft/syft dir:C:/ -vv -o spdx-json=sbom.json
+      - name: Run SYFT on Ubuntu
+        if: ${{ runner.os == 'Linux' }}
+        run: syft dir:/ -vv -o spdx-json=sbom.json
+      - name: Run SYFT on macOS
+        if: ${{ runner.os == 'macOS' }}
+        run: sudo syft dir:/ -vv -o spdx-json=sbom.json --exclude ./Users --exclude ./System/Volumes --exclude ./private
+        shell: bash
+      - name: Compress SBOM file
+        run: Compress-Archive sbom.json sbom.json.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.os }}
+          path: sbom.json.zip
+          if-no-files-found: warn
