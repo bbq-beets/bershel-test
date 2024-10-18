@@ -1,0 +1,22 @@
+name: Manual workflow
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ macos-14, macos-14-large ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
