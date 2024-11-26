@@ -20,11 +20,11 @@ jobs:
             xcode_versions: 16.0
           - os: macos-14
             xcode_versions: 16.1
-          - os: macos-15
+          - os: macos-15-xlarge
             xcode_versions: 15.4
-          - os: macos-15
+          - os: macos-15-xlarge
             xcode_versions: 16.0
-          - os: macos-15
+          - os: macos-15-xlarge
             xcode_versions: 16.1
             
     runs-on: ${{ matrix.os }}
