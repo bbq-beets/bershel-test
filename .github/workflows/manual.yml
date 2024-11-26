@@ -3,21 +3,37 @@ name: Manual workflow
 on:
   workflow_dispatch:
 
-
 jobs:
-  test:
+  xcode-simulators:
     strategy:
       matrix:
-        os: [ macos-14, macos-14-large, macos-15-xlarge, macos-15-large ]
+        include:
+          - os: macos-14
+            xcode_versions: 15.1
+          - os: macos-14
+            xcode_versions: 15.2
+          - os: macos-14
+            xcode_versions: 15.3
+          - os: macos-14
+            xcode_versions: 15.4
+          - os: macos-14
+            xcode_versions: 16.0
+          - os: macos-14
+            xcode_versions: 16.1
+          - os: macos-15
+            xcode_versions: 15.4
+          - os: macos-15
+            xcode_versions: 16.0
+          - os: macos-15
+            xcode_versions: 16.1
+            
     runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Xcodes
+      - name: List Xcode ${{ matrix.xcode_versions }} simulators
         run: |
-           echo "---Links---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type l
-           echo "---Folders---"
-           find /Applications -name "Xcode_*" -maxdepth 1 -mindepth 1 -type d
-      - name: Disk
-        run: |
-          diskutil info / | grep "Free Space"
-          df -h
+            echo "Checking Xcode ${{ matrix.xcode_versions }} on ${{ matrix.os }}..."
+            sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode_versions }}.app"
+            
+            # Check for duplicate simulators
+            xcrun simctl list devices 
