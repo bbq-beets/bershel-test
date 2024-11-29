@@ -4,36 +4,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  xcode-simulators:
-    strategy:
-      matrix:
-        include:
-          - os: macos-14
-            xcode_versions: 15.1
-          - os: macos-14
-            xcode_versions: 15.2
-          - os: macos-14
-            xcode_versions: 15.3
-          - os: macos-14
-            xcode_versions: 15.4
-          - os: macos-14
-            xcode_versions: 16.0
-          - os: macos-14
-            xcode_versions: 16.1
-          - os: macos-15-xlarge
-            xcode_versions: 15.4
-          - os: macos-15-xlarge
-            xcode_versions: 16.0
-          - os: macos-15-xlarge
-            xcode_versions: 16.1
-            
+  test-macos:
     runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-15-large, macos-15-xlarge, macos-14-large, macos-14 ]
 
     steps:
-      - name: List Xcode ${{ matrix.xcode_versions }} simulators
+      - name: Check default values
         run: |
-            echo "Checking Xcode ${{ matrix.xcode_versions }} on ${{ matrix.os }}..."
-            sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode_versions }}.app"
-            
-            # Check for duplicate simulators
-            xcrun simctl list devices 
+          clang --version
+          xcode-select -p
+          xcodebuild -version
+
+      - name: Check clan/llvm version bundled with xcode 15.4
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app
+          clang --version
+
+      - name: Check clan/llvm version bundled with xcode16.1
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.1.app
+          clang --version
