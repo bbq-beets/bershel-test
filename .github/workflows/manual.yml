@@ -14,5 +14,5 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Check RAM size
-        run: echo "scale=2; $(sysctl -n hw.memsize) / 1024 / 1024 / 1024" | bc
+      - name: ENV
+        run: printenv
