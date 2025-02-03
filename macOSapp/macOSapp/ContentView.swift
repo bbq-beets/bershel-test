@@ -8,12 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var displayText: String = "This is a test text line"
+    
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text(displayText)
+                .accessibilityLabel("outputLabel")
+            Button("Tap me") {
+                displayText = "Text has been changed!"
+                print("Button was tapped")
+            }
+                .accessibilityIdentifier("tapMeButton")
         }
         .padding()
     }
