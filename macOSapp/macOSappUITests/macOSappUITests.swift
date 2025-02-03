@@ -53,7 +53,12 @@ final class macOSappUITests: XCTestCase {
         
         tapMeButton.tap()
         
-        XCTAssertEqual(outputLabel.label, "Text has been changed!")
-
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "label == %@", "Text has been changed!"),
+            object: outputLabel
+        )
+        
+        let result = XCTWaiter().wait(for: [expectation], timeout: 10.0)
+        XCTAssertEqual(result, .completed, "Text was not updated")
     }
 }
