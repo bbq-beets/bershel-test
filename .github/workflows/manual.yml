@@ -49,7 +49,7 @@ jobs:
         run: xcrun simctl list
       
       - name: Run tests
-        working-directory: macOSapp
+        working-directory: ./macOSapp
         run: |
           xcodebuild test -project macOSapp.xcodeproj \
           -scheme macOSapp \
