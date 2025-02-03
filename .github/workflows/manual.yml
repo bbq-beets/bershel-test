@@ -47,3 +47,12 @@ jobs:
 
       - name: List installed simulators & runtimes
         run: xcrun simctl list
+      
+      - name: Run tests
+        working-directory: macOSapp
+        run: |
+          xcodebuild test -project macOSapp.xcodeproj \
+          -scheme macOSapp \
+          -destination 'platform=macOS' \
+          -only-testing:macOSappUITests \
+          -enableCodeCoverage YES
