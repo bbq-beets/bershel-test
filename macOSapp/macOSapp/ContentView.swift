@@ -16,9 +16,12 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text(displayText)
-                .accessibilityIdentifier("outputLabel")
+                    .accessibilityIdentifier("outputLabel")
+                    .accessibilityLabel(displayText)
             Button("Tap me") {
-                displayText = "Text has been changed!"
+                DispatchQueue.main.async {
+                    displayText = "Text has been changed!"
+                }
                 print("Button was tapped")
             }
                 .accessibilityIdentifier("tapMeButton")
