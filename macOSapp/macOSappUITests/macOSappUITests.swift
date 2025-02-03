@@ -46,22 +46,14 @@ final class macOSappUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        let button = app.buttons["tapMeButton"]
-        
-        let exists = NSPredicate(format: "exists == true")
-        expectation(for: exists, evaluatedWith: button, handler: nil)
-        waitForExpectations(timeout: 10, handler: nil)
+        let outputLabel = app.staticTexts["outputLabel"]
+        let tapMeButton = app.buttons["tapMeButton"]
 
-        XCTAssertTrue(button.exists, "The 'Tap me' button should exist")
+        XCTAssertEqual(outputLabel.label, "This is a test text line")
         
-        button.tap()
+        tapMeButton.tap()
         
-        let updatedText = app.staticTexts["outputLabel"]
-        let textChanged = NSPredicate(format: "label == 'Text has been changed!'")
-        
-        expectation(for: textChanged, evaluatedWith: updatedText, handler: nil)
-        waitForExpectations(timeout: 10, handler: nil)
+        XCTAssertEqual(outputLabel.label, "Text has been changed!")
 
-        XCTAssertEqual(updatedText.label, "Text has been changed!", "The text should update after button press")
     }
 }
