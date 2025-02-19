@@ -1,39 +1,20 @@
+
 name: Manual workflow
 
 on:
   workflow_dispatch:
 
 jobs:
-  xcode-simulators:
+  check:
     strategy:
-      matrix:
-        include:
-          - os: macos-14
-            xcode_versions: 15.1
-          - os: macos-14
-            xcode_versions: 15.2
-          - os: macos-14
-            xcode_versions: 15.3
-          - os: macos-14
-            xcode_versions: 15.4
-          - os: macos-14
-            xcode_versions: 16.0
-          - os: macos-14
-            xcode_versions: 16.1
-          - os: macos-15-xlarge
-            xcode_versions: 15.4
-          - os: macos-15-xlarge
-            xcode_versions: 16.0
-          - os: macos-15-xlarge
-            xcode_versions: 16.1
-            
+      fail-fast: false
+      matrix: 
+        os: [ macos-15-xlarge, macos-15-large ]
+
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: List Xcode ${{ matrix.xcode_versions }} simulators
+      - name: Check pip
         run: |
-            echo "Checking Xcode ${{ matrix.xcode_versions }} on ${{ matrix.os }}..."
-            sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode_versions }}.app"
-            
-            # Check for duplicate simulators
-            xcrun simctl list devices 
+          pip3 --version
+          which pip3
