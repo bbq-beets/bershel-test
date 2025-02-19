@@ -9,11 +9,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        os: [ macos-15-xlarge, macos-15-large ]
+        os: [ macos-15-large ]
 
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Check pip
+        run: |
+          pip3 --version
+          which pip3
+      - name: Update Python 3.13 path
+        run: |
+          brew link --overwrite python@3.13
       - name: Check pip
         run: |
           pip3 --version
