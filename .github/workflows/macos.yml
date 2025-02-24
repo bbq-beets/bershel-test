@@ -1,0 +1,72 @@
+name: macOS Troubleshooting
+
+on: [workflow_dispatch]
+
+jobs:
+  troubleshoot:
+    runs-on: macos-15-xlarge
+    strategy:
+      matrix:
+        test_command:
+          - "sysbench cpu run --cpu-max-prime=1000000 --threads=1 --events=1000000000"
+          - "sysbench cpu run --cpu-max-prime=10000000 --threads=$(sysctl -n hw.ncpu) --events=1000000000"
+          - "sysbench memory run --memory-block-size=1M --memory-total-size=20000G --threads=1"
+          - "sysbench memory run --memory-block-size=1M --memory-total-size=60000G --threads=$(sysctl -n hw.ncpu)"
+          - "fio --name=write_test --rw=write --bs=4k --size=700M --numjobs=$(sysctl -n hw.ncpu)"
+          - "fio --name=read_test --rw=read --bs=4k --size=2G --numjobs=$(sysctl -n hw.ncpu)"
+    steps:
+    
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+
+      - name: Pre-check system state
+        run: |
+          echo "============ Initial System State ============"
+          echo "========= Running Processes ========="
+          ps aux
+          echo "========= Disk Usage ========="
+          df -h
+          echo "========= Memory Usage ========="
+          vm_stat
+          echo "========= System Load ========="
+          uptime
+
+      - name: Run test command multiple times
+        run: |
+          brew install sysbench fio
+          for i in {1..10}; do
+            echo "Iteration $i: Running command: ${{ matrix.test_command }}"
+            eval "${{ matrix.test_command }}"
+          done
+
+      - name: Collect system logs
+        if: always()
+        run: |
+          mkdir -p logs
+          echo "========= System Information =========" > logs/system_info.txt
+          system_profiler SPSoftwareDataType >> logs/system_info.txt
+          
+          echo "========= Disk Usage =========" >> logs/system_info.txt
+          df -h >> logs/system_info.txt
+          
+          echo "========= Memory Usage =========" >> logs/system_info.txt
+          vm_stat >> logs/system_info.txt
+          
+          echo "========= System Load =========" >> logs/system_info.txt
+          uptime >> logs/system_info.txt
+          
+          echo "========= Running Processes =========" >> logs/system_info.txt
+          ps aux >> logs/system_info.txt
+          
+          echo "========= GitHub Actions Runner Logs =========" > logs/runner_logs.txt
+          cat /Users/runner/Library/Logs/github-actions/* >> logs/runner_logs.txt 2>/dev/null || echo "No runner logs found"
+
+          echo "========= System Logs =========" > logs/system_logs.txt
+          log show --last 30m > logs/system_logs.txt || echo "Failed to collect system logs"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-troubleshooting-logs-${{ matrix.test_command }}
+          path: logs/
