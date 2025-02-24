@@ -7,66 +7,52 @@ jobs:
     runs-on: macos-15-xlarge
     strategy:
       matrix:
-        test_command:
-          - "sysbench cpu run --cpu-max-prime=1000000 --threads=1 --events=1000000000"
-          - "sysbench cpu run --cpu-max-prime=10000000 --threads=$(sysctl -n hw.ncpu) --events=1000000000"
-          - "sysbench memory run --memory-block-size=1M --memory-total-size=20000G --threads=1"
-          - "sysbench memory run --memory-block-size=1M --memory-total-size=60000G --threads=$(sysctl -n hw.ncpu)"
-          - "fio --name=write_test --rw=write --bs=4k --size=700M --numjobs=$(sysctl -n hw.ncpu)"
-          - "fio --name=read_test --rw=read --bs=4k --size=2G --numjobs=$(sysctl -n hw.ncpu)"
+        xcode: [ 16.2, 16.1 ]
+
     steps:
-    
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-
-      - name: Pre-check system state
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "${{ matrix.xcode }}"
+      - name: Debug
         run: |
-          echo "============ Initial System State ============"
-          echo "========= Running Processes ========="
-          ps aux
-          echo "========= Disk Usage ========="
-          df -h
-          echo "========= Memory Usage ========="
-          vm_stat
-          echo "========= System Load ========="
-          uptime
-
-      - name: Run test command multiple times
+          xcrun simctl list runtimes
+          xcrun simctl list devicetypes
+      - name: Start iOS Simulator
         run: |
-          brew install sysbench fio
-          for i in {1..10}; do
-            echo "Iteration $i: Running command: ${{ matrix.test_command }}"
-            eval "${{ matrix.test_command }}"
-          done
+          DEVICE_NAME="iPhone-16-Pro"
+          OS_VERSION=$(xcrun simctl list runtimes | grep -Eo 'com.apple.CoreSimulator.SimRuntime.iOS-18-[0-9]+' | tail -1)
+          UDID=$(xcrun simctl create "TestDevice" "com.apple.CoreSimulator.SimDeviceType.$DEVICE_NAME" "$OS_VERSION")
+          echo "Simulator UDID: $UDID"
 
-      - name: Collect system logs
+          echo "=== Booting Simulator ==="
+          start_time=$(date +%s)
+          xcrun simctl boot "$UDID"
+          end_time=$(date +%s)
+          mkdir -p logs
+          echo "Boot time: $((end_time - start_time)) seconds" | tee -a logs/performance.txt
+
+      - name: Check Simulator State
+        run: |
+          echo "=== Simulator Status ===" > logs/simulator_status.txt
+          xcrun simctl list devices | grep "TestDevice" >> logs/simulator_status.txt
+
+      - name: Take Screenshot
+        run: |
+          echo "=== Taking Screenshot ==="
+          start_time=$(date +%s)
+          xcrun simctl io booted screenshot logs/screenshot.png
+          end_time=$(date +%s)
+          echo "Screenshot time: $((end_time - start_time)) seconds" | tee -a logs/performance.txt
+
+      - name: Collect logs
         if: always()
         run: |
-          mkdir -p logs
-          echo "========= System Information =========" > logs/system_info.txt
-          system_profiler SPSoftwareDataType >> logs/system_info.txt
-          
-          echo "========= Disk Usage =========" >> logs/system_info.txt
-          df -h >> logs/system_info.txt
-          
-          echo "========= Memory Usage =========" >> logs/system_info.txt
-          vm_stat >> logs/system_info.txt
-          
-          echo "========= System Load =========" >> logs/system_info.txt
-          uptime >> logs/system_info.txt
-          
-          echo "========= Running Processes =========" >> logs/system_info.txt
-          ps aux >> logs/system_info.txt
-          
-          echo "========= GitHub Actions Runner Logs =========" > logs/runner_logs.txt
-          cat /Users/runner/Library/Logs/github-actions/* >> logs/runner_logs.txt 2>/dev/null || echo "No runner logs found"
-
-          echo "========= System Logs =========" > logs/system_logs.txt
-          log show --last 30m > logs/system_logs.txt || echo "Failed to collect system logs"
+          echo "=== Simulator Logs ===" > logs/simulator_logs.txt
+          xcrun simctl spawn booted log stream --style syslog --predicate 'subsystem == "com.apple.CoreSimulator"' -timeout 10 >> logs/simulator_logs.txt || echo "No simulator logs found"
 
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: macos-troubleshooting-logs-${{ matrix.test_command }}
+          name: ios-simulator-performance-logs-${{ matrix.xcode }}
           path: logs/
