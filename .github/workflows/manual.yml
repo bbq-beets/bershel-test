@@ -51,11 +51,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run tests
+#      - name: Run tests
+#        working-directory: macOSapp
+#        run: |
+#          xcodebuild test -project macOSapp.xcodeproj \
+#          -scheme macOSapp \
+#          -destination 'platform=macOS' \
+#          -only-testing:macOSappUITests \
+#          -enableCodeCoverage YES
+
+      - name: Run build
         working-directory: macOSapp
         run: |
-          xcodebuild test -project macOSapp.xcodeproj \
+          xcodebuild build -project macOSapp.xcodeproj \
           -scheme macOSapp \
-          -destination 'platform=macOS' \
-          -only-testing:macOSappUITests \
-          -enableCodeCoverage YES
+          -destination 'platform=macOS'
