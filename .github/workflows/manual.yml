@@ -8,61 +8,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-14, macos-14-xlarge, macos-15-large, macos-15-xlarge ]
-        xcode: [ 16.1, 16.2 ]
+        os: [ macos-14, macos-14-xlarge, macos-14-large, macos-15-large, macos-15-xlarge ]
             
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Check if macOSX.sdk exists
+      - name: Check CPU number
         run: |
-          if [ -d "$(xcrun --sdk macosx --show-sdk-path)" ]; then
-            echo "✅ macOSX.sdk is available"
-          else
-            echo "❌ macOSX.sdk is missing"
-            exit 1
-          fi
-    
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ matrix.xcode }}
-
-      - name: Show Xcodebuild version
-        run: xcodebuild -version
-
-      - name: Check if macOSX.sdk for selected Xcode ${{ matrix.xcode }} exists
-        run: |
-          if [ -d "$(xcrun --sdk macosx --show-sdk-path)" ]; then
-            echo "✅ macOSX.sdk is available"
-          else
-            echo "❌ macOSX.sdk is missing"
-            exit 1
-          fi
-
-      - name: List available SDKs
-        run: xcodebuild -showsdks
-
-      - name: List selected SDK
-        run: xcrun --show-sdk-version
-
-      - name: List installed simulators & runtimes
-        run: xcrun simctl list
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-#      - name: Run tests
-#        working-directory: macOSapp
-#        run: |
-#          xcodebuild test -project macOSapp.xcodeproj \
-#          -scheme macOSapp \
-#          -destination 'platform=macOS' \
-#          -only-testing:macOSappUITests \
-#          -enableCodeCoverage YES
-
-      - name: Run build
-        working-directory: macOSapp
-        run: |
-          xcodebuild build -project macOSapp.xcodeproj \
-          -scheme macOSapp \
-          -destination 'platform=macOS'
+          sysctl -n hw.ncpu
