@@ -10,21 +10,24 @@ jobs:
       matrix:
         os: [macos-14, macos-15]
         duration_minutes: [5]
+        interval: [10]
 
     steps:
       - name: Set up workspace
         run: mkdir -p cpu_stats
 
-      - name: Get CPU core count
+      - name: Get CPU core count and publish Image Version
         run: |
           cores=$(sysctl -n hw.ncpu)
           echo "CPU core count: $cores"
           echo "CPU_COUNT=$cores" >> "$GITHUB_ENV"
+          echo "ImageVersion=$ImageVersion" >> "$GITHUB_ENV"
 
-      - name: Collect top 10 CPU-consuming processes every 30 seconds
+      - name: Collect top 10 CPU-consuming processes every ${{ matrix.interval }} seconds
         env:
           DURATION_MINUTES: ${{ matrix.duration_minutes }}
           IMAGE_NAME: ${{ matrix.os }}
+          INTERVAL: ${{ matrix.interval }}
         run: |
           echo "Collecting CPU stats on $IMAGE_NAME for $DURATION_MINUTES minute(s)..."
           end_time=$(( $(date +%s) + DURATION_MINUTES * 60 ))
@@ -34,7 +37,7 @@ jobs:
             echo "[$timestamp] Sample #$i" >> cpu_stats/usage.txt
             ps -A -o %cpu,comm | sort -nr | head -n 10 >> cpu_stats/usage.txt
             echo "" >> cpu_stats/usage.txt
-            sleep 30
+            sleep $INTERVAL
             i=$((i+1))
           done
 
