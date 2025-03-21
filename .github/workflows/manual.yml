@@ -4,15 +4,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  xcode-simulators:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ macos-14, macos-14-xlarge, macos-14-large, macos-15, macos-15-large, macos-15-xlarge ]
-            
+  collect-cpu:
     runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-14, macos-15]
+        duration_minutes: [5]
 
     steps:
-      - name: Check CPU number
+      - name: Set up workspace
+        run: mkdir -p cpu_stats
+
+      - name: Get CPU core count
         run: |
-          sysctl -n hw.ncpu
+          cores=$(sysctl -n hw.ncpu)
+          echo "CPU core count: $cores"
+          echo "CPU_COUNT=$cores" >> "$GITHUB_ENV"
+
+      - name: Collect top 10 CPU-consuming processes every 30 seconds
+        env:
+          DURATION_MINUTES: ${{ matrix.duration_minutes }}
+          IMAGE_NAME: ${{ matrix.os }}
+        run: |
+          echo "Collecting CPU stats on $IMAGE_NAME for $DURATION_MINUTES minute(s)..."
+          end_time=$(( $(date +%s) + DURATION_MINUTES * 60 ))
+          i=1
+          while [ $(date +%s) -lt $end_time ]; do
+            timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+            echo "[$timestamp] Sample #$i" >> cpu_stats/usage.txt
+            ps -A -o %cpu,comm | sort -nr | head -n 10 >> cpu_stats/usage.txt
+            echo "" >> cpu_stats/usage.txt
+            sleep 30
+            i=$((i+1))
+          done
+
+      - name: Upload CPU stats as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-usage-${{ matrix.os }}-${{ env.ImageVersion }}-cpu${{ env.CPU_COUNT }}-${{ matrix.duration_minutes }}min
+          path: cpu_stats/usage.txt
