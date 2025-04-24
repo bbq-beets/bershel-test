@@ -13,9 +13,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Check CPU number
+      - name: Check ulimit
         run: |
-          sysctl -n hw.ncpu
-      - name: Print ENV
-        run: |
-          printenv
+          ulimit -a
