@@ -18,7 +18,7 @@ jobs:
           ulimit -a
       - name: Set ulimit
         run: |
-          ulimit -u 2001
+          sudo ulimit -u 2001
       - name: Check ulimit
         run: |
           ulimit -a
