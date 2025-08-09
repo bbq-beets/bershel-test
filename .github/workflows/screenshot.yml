@@ -13,21 +13,70 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run test script
+      - name: Run Apple Script from file
+        if: always()
+        shell: bash
         run: |
-          chmod +x ./test.sh
-          ./test.sh
+          set -e
+          echo "tell application \"System Events\"
+          click at {123,456}
+          end tell
+          " > b.scpt
+          osascript b.scpt
+          echo "Test passed"
 
       - name: Take screenshot
         if: always()
         run: |
           mkdir -p screenshots
-          screencapture -x screenshots/screenshot-${{ matrix.macos }}.png || echo "screencapture failed"
+          screencapture -x screenshots/screenshot-${{ matrix.macos }}-1.png || echo "screencapture failed"
+        shell: bash
+  
+      - name: Run inline Apple Script
+        if: always()
+        shell: bash
+        run: |
+          set -e
+          osascript -e 'tell application "Finder" to close windows'
+          echo "Test passed"
+
+      - name: Take screenshot
+        if: always()
+        run: |
+          mkdir -p screenshots
+          screencapture -x screenshots/screenshot-${{ matrix.macos }}-2.png || echo "screencapture failed"
+        shell: bash
+
+      - name: Run Bash with Apple Script
+        shell: bash
+        if: always()
+        run: |
+            chmod +x ./test.sh
+            ./test.sh
+
+      - name: Take screenshot
+        if: always()
+        run: |
+          mkdir -p screenshots
+          screencapture -x screenshots/screenshot-${{ matrix.macos }}-3.png || echo "screencapture failed"
+        shell: bash
+
+      - name: Run default shell with Apple Script
+        if: always()
+        run: |
+            chmod +x ./test.sh
+            ./test.sh
+
+      - name: Take screenshot
+        if: always()
+        run: |
+          mkdir -p screenshots
+          screencapture -x screenshots/screenshot-${{ matrix.macos }}-4.png || echo "screencapture failed"
         shell: bash
 
       - name: Upload screenshot artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshot-${{ matrix.macos }}
-          path: screenshots/screenshot-${{ matrix.macos }}.png
+          name: screenshots-${{ matrix.macos }}
+          path: screenshots
