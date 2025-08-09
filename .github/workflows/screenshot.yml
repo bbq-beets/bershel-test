@@ -1,0 +1,33 @@
+name: macOS Screenshot
+
+on: [workflow_dispatch]
+
+jobs:
+  troubleshoot:
+    runs-on: ${{ matrix.macos }}
+    strategy:
+      matrix:
+        macos: [macos-14-canary, macos-15-canary]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run test script
+        run: |
+          chmod +x ./test.sh
+          ./test.sh
+
+      - name: Take screenshot
+        if: always()
+        run: |
+          mkdir -p screenshots
+          screencapture -x screenshots/screenshot-${{ matrix.macos }}.png || echo "screencapture failed"
+        shell: bash
+
+      - name: Upload screenshot artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-${{ matrix.macos }}
+          path: screenshots/screenshot-${{ matrix.macos }}.png
