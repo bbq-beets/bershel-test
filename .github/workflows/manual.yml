@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-15-large
+          - os: macos-15-large-canary
             xcode_versions: 26-beta-5
             
     runs-on: ${{ matrix.os }}
