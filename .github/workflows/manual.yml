@@ -14,7 +14,19 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Install platforms
+      - name: Select Xcode
         run: |
             sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode_versions }}.app"
-            xcodebuild -downloadAllPlatforms
+
+      - name: List SDKs
+        run: |
+            xcodebuild -showsdks
+
+      - name: List runtimes
+        run: |
+            xcrun simctl list runtimes
+
+      - name: List devices
+        run: |
+            xcrun simctl list devices
+            
