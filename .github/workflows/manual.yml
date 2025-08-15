@@ -30,3 +30,21 @@ jobs:
         run: |
             xcrun simctl list devices
             
+      - name: Check iOS device
+        run: |
+            SIMULATOR_UDID="62DAAC6A-D81B-4EF4-BFFC-5FE09AF6EFD0"
+            echo "🔹 Booting simulator $SIMULATOR_UDID..."
+            xcrun simctl boot "$SIMULATOR_UDID" || true
+            echo -n "⏳ Waiting for simulator to boot"
+            while true; do
+                STATE=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" | awk -F'[()]' '{print $3}' | xargs)
+                if [[ "$STATE" == "Booted" ]]; then
+                    echo " ✅ Booted"
+                    break
+                fi
+                echo -n "."
+                sleep 1
+            done
+            sleep 2  # пример паузы
+            echo "🔹 Shutting down simulator $SIMULATOR_UDID..."
+            xcrun simctl shutdown "$SIMULATOR_UDID"
