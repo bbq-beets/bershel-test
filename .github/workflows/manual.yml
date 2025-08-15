@@ -37,6 +37,8 @@ jobs:
             xcrun simctl boot "$SIMULATOR_UDID" || true
             echo -n "⏳ Waiting for simulator to boot"
             while true; do
+                xcrun simctl list devices | grep "$SIMULATOR_UDID"
+                xcrun simctl list devices | grep "$SIMULATOR_UDID" | awk -F'[()]' '{print $3}' | xargs
                 STATE=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" | awk -F'[()]' '{print $3}' | xargs)
                 if [[ "$STATE" == "Booted" ]]; then
                     echo " ✅ Booted"
