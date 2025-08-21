@@ -21,13 +21,13 @@ jobs:
           - os: macos-14-canary
             xcode_versions: 16.2
           - os: macos-15-canary
-            xcode_versions: 16
+            xcode_versions: 16.4
           - os: macos-15-canary
-            xcode_versions: 16.1
+            xcode_versions: 16.4
           - os: macos-15-canary
-            xcode_versions: 16.2
+            xcode_versions: 16.4
           - os: macos-15-canary
-            xcode_versions: 16.3
+            xcode_versions: 16.4
           - os: macos-15-canary
             xcode_versions: 16.4
 
