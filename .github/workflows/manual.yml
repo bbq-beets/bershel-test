@@ -6,35 +6,14 @@ on:
 jobs:
   xcode-simulators:
     strategy:
-      matrix:
-        include:
-          - os: macos-14-canary
-            xcode_versions: 15.1
-          - os: macos-14-canary
-            xcode_versions: 15.2
-          - os: macos-14-canary
-            xcode_versions: 15.3
-          - os: macos-14-canary
-            xcode_versions: 15.4
-          - os: macos-14-canary
-            xcode_versions: 16.1
-          - os: macos-14-canary
-            xcode_versions: 16.2
-          - os: macos-15-canary
-            xcode_versions: 16.4
-          - os: macos-15-canary
-            xcode_versions: 16.4
-          - os: macos-15-canary
-            xcode_versions: 16.4
-          - os: macos-15-canary
-            xcode_versions: 16.4
-          - os: macos-15-canary
-            xcode_versions: 16.4
+      matrix:  
+        os: [ macos-15-canary, macos-15-large-canary ]
+        attempt: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Simple repro
+      - name: Attempt ${{ matrix.attempt }}
         run: |
-            sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode_versions }}.app"
+            sudo xcode-select -s "/Applications/Xcode_16.4.app"
             xcodebuild -downloadPlatform iOS
