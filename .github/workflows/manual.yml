@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-14, macos-14-canary, macos-14-large, macos-15, macos-15-canary, macos-15-large]
+        os: [ macos-14-canary, macos-15-canary, macos-26-canary ]
 
     steps:
       - name: Get CPU core count
