@@ -11,6 +11,10 @@ jobs:
         os: [ macos-14-canary, macos-15-canary, macos-26-canary ]
 
     steps:
-      - name: Get CPU core count
+      - name: Test
         run: |
-          sysctl -n hw.ncpu
+          xcrun --show-sdk-version
+          echo "-----------=========================================-----------"
+          sudo xcode-select -s /Library/Developer/CommandLineTools
+          echo "-----------=========================================-----------"
+          xcrun --show-sdk-version
