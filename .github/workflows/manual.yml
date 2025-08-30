@@ -21,11 +21,12 @@ jobs:
             sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode-version }}.app"
             
             TO=$(command -v gtimeout || command -v timeout || true)
-            
-            $TO 10 xcodebuild -downloadPlatform iOS
+
+            set +e
+            $TO -k 2 10 xcodebuild -downloadPlatform iOS
             rc=$?
+            set -e
             
-            # 124 = сработал таймаут → трактуем как успех
             if [[ $rc -eq 124 ]]; then
               exit 0
             else
