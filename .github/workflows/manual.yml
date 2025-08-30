@@ -6,6 +6,7 @@ on:
 jobs:
   xcode-simulators:
     strategy:
+      fail-fast: false
       matrix:  
         os: [ macos-15-canary, macos-15-large-canary ]
         xcode-version: [ 16, 16.1, 16.2, 16.3, 16.4 ]
