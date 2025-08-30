@@ -20,6 +20,7 @@ jobs:
             brew install coreutils
             
             sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode-version }}.app"
+            xcrun simctl list > /dev/null
             
             TO=$(command -v gtimeout || command -v timeout || true)
 
