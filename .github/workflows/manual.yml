@@ -7,11 +7,13 @@ jobs:
   check-cores:
     strategy:
       matrix:
-        os: [ macos-14-canary, macos-15-canary ]
+        os: [ macos-15-canary ]
             
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: List cores number
-        run: |
-            sysctl -n hw.ncpu
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '26.0-beta'
+    - name: Install iOS
+      run: xcodebuild -downloadPlatform iOS
