@@ -7,11 +7,11 @@ jobs:
   check-cores:
     strategy:
       matrix:
-        os: [ macos-14-canary, macos-15-canary ]
+        os: [ macos-15-canary, macos-26-canary ]
             
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: List cores number
+      - name: Fastlane
         run: |
-            sysctl -n hw.ncpu
+            fastlane --version
