@@ -6,12 +6,19 @@ on:
 jobs:
   check-cores:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ macos-15-canary, macos-26-canary ]
+        os: [ macos-13-canary, macos-15-canary, macos-15-intel, macos-26-canary ]
             
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Fastlane
         run: |
-            fastlane --version
+            echo "- [i] which clang result:"
+            which clang
+            echo "- [i] clang --version result:"
+            clang --version
+            echo "- [i] `$(brew --prefix llvm@{0})`/bin/clang result:"
+            $(brew --prefix llvm@{0})/bin/clang
+
