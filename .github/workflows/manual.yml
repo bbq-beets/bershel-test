@@ -7,11 +7,11 @@ jobs:
   check-cores:
     strategy:
       matrix:
-        os: [ macos-14-canary, macos-15-canary ]
+        os: [ windows-latest ]
             
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: List cores number
+      - name: Test
         run: |
-            sysctl -n hw.ncpu
+            choco --help
